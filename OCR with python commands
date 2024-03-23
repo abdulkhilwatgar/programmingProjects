@@ -1,0 +1,51 @@
+import pytesseract
+import PIL.Image
+import cv2
+from pytesseract import Output
+import subprocess
+import re
+
+pytesseract.pytesseract.tesseract_cmd= r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+myconfig = r"--psm 6 --oem 3"
+
+text = pytesseract.image_to_string(PIL.Image.open("2+2.png"), config=myconfig)
+print(text)
+
+img = cv2.imread('2+2.png')
+height, width, _ = img.shape
+
+boxes = pytesseract.image_to_boxes(img, config=myconfig)
+#print(boxes)
+
+#for box in boxes.splitlines():
+#    box = box.split(" ")
+#    img = cv2.rectangle(img, (int(box[1]), height - int(box[2])), (int(box[3]), height-int(box[4])), (0, 255, 0), 2)
+
+data = pytesseract.image_to_data(img, config=myconfig, output_type=Output.DICT)
+
+#print(data.keys())
+
+
+
+amount_boxes = len(data['text'])
+for i in range(amount_boxes):
+    if float(data['conf'][i]) > 60:
+        (x, y, wdith, height) = (data['left'][i], data['top'][i], data['width'][i], data['height'][i])
+        img = cv2.rectangle(img, (x,y), (x+wdith, y+height), (0,255,0), 2)
+        img = cv2.putText(img, data['text'][i], (x, y+height +20), cv2.FONT_HERSHEY_SIMPLEX, .7, (0,255,0),2, cv2.LINE_AA)
+
+cv2.imshow("img", img)
+cv2.waitKey(0)
+
+command_match = re.search(r'print\((.*?)\)', text)
+if command_match:
+    command_to_execute = command_match.group(1)
+    print("Command to execute:", command_to_execute)
+
+    try:
+        result = eval(command_to_execute)
+        print("Result:", result)
+    except Exception as e:
+        print("Error executing command:", e)
+else:
+    print("No valid command found in the extracted text.")
