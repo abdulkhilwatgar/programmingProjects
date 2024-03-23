@@ -1,0 +1,19 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+import joblib
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import numpy as np
+
+tslamodel = joblib.load('TSLAPredWDate')
+
+openVal = float(input('Open: '))
+highVal = float(input('High: '))
+lowVal = float(input('Low: '))
+volumeVal = float(input('Volume: '))
+
+future_data = np.array([[openVal, highVal, lowVal, volumeVal]])
+        
+futurePred = tslamodel.predict(future_data)
+print(f'Future predictions: {futurePred}')
