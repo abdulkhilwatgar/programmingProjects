@@ -1,0 +1,15 @@
+import joblib 
+import numpy as np
+from sklearn.metrics import accuracy_score
+
+irismodel = joblib.load('irisReader.joblib')
+
+sLength = float(input('Sepal length: '))
+sWidth = float(input('Sepal width: '))
+pLength = float(input('Petal length: '))
+pWidth = float(input('Petal width: '))
+
+inputData = np.array([[sLength, sWidth, pLength, pWidth]])
+predictions = irismodel.predict(inputData)
+
+print(f'Predictions: {predictions} ')
