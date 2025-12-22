@@ -1,0 +1,13 @@
+import joblib as jb
+import pandas as pd
+import numpy as np
+
+cardsmodel = joblib.load("CarDSModel")
+year = float(input("Year: "))
+mileage = float(input("Mileage: "))
+present_price = float(input("Present price: "))
+
+futureData = np.array([[year, mileage, present_price]])
+
+futurePred = cardsmodel.predict(futureData)
+print(f'Prediction: {futurePred[0]}')
